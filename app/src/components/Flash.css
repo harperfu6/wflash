@@ -18,3 +18,19 @@
 .flash:active {
   background-color: rgba(68, 107, 158, 0.2);
 }
+
+.word {
+  font-size: 1.5em;
+  color: #335d92;
+  font-weight: 700;
+  margin-top: 1em;
+}
+
+.duration {
+  font-size: 1.5em;
+  color: #335d92;
+  font-weight: 700;
+  margin-left: 1em;
+  width: 4em;
+  height: 1.5em;
+}
