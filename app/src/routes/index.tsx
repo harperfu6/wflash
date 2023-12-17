@@ -1,37 +1,54 @@
 import { createSignal, Show, Suspense } from "solid-js";
+import { createServerData$ } from "solid-start/server";
 import Flash from "~/components/Flash";
 import Settings from "~/components/Settings";
-import { fetchWordsOnSignal } from "~/lib/fetchWords";
+import { fetchWords } from "~/lib/fetchWords";
+import { ChatSettings } from "~/types";
 
 export default function Home() {
-  const [isFetch, setIsFetch] = createSignal(false);
-  const words = fetchWordsOnSignal(isFetch)();
+  // Chat Settings
+  const [wordLength, setWordLength] = createSignal(10);
+  const [wordNum, setWordNum] = createSignal(5);
 
-  // Settings
+  // Flash Settings
   const [intervalTime, setIntervalTime] = createSignal(1);
 
+  // Fetch
+  const [chatSettings, setChatSettings] = createSignal<
+    ChatSettings | undefined
+  >(undefined);
+
+  const fetchedWords = createServerData$(fetchWords, {
+    key: () => chatSettings(),
+  });
+
   const onClickFetch = () => {
-    setIsFetch(true);
+    // ここでcreateServerData$にreactiveな値を設定する
+    setChatSettings({ wordLength: wordLength(), wordNum: wordNum() });
   };
 
   return (
     <main>
-      <Suspense fallback={<div>loading...</div>}>
+      <Suspense fallback={<div>文を生成中...</div>}>
         <Show
-          when={words()}
+          when={fetchedWords()}
           fallback={
             <>
               <Settings
-                intervalTime={intervalTime()}
-                setIntervalTime={setIntervalTime}
+                wordLength={wordLength()}
+                setWordLength={setWordLength}
+                wordNum={wordNum()}
+                setWordNum={setWordNum}
               />
-              <div>
-                <button onClick={onClickFetch}>fetch</button>
-              </div>
+              <button onClick={onClickFetch}>生成</button>
             </>
           }
         >
-          <Flash words={words()!} inertvalTime={intervalTime()} />
+          <Flash
+            words={fetchedWords()!}
+            intervalTime={intervalTime()}
+            setIntervalTime={setIntervalTime}
+          />
         </Show>
       </Suspense>
     </main>

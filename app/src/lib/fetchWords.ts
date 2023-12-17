@@ -1,6 +1,5 @@
-import { Accessor, createResource } from "solid-js";
-import server$, { createServerData$ } from "solid-start/server";
 import OpenAI from "openai";
+import { ChatSettings } from "~/types";
 
 const openai = new OpenAI({
   apiKey: process.env["OPENAI_API_KEY"],
@@ -14,24 +13,21 @@ async function chat(query: string) {
   return completion.choices[0];
 }
 
-const _fetchWords = async () => {
-  // return ["aaa", "bbb", "ccc"];
-
-  const query = "10文字以上20文字以内の短文を5個上げて下さい";
-  // const query = "単語を5個上げて下さい";
+export const fetchWords = async (chatSettings: ChatSettings) => {
+  const query = `${chatSettings.wordLength}文字程度の短文を${chatSettings.wordNum}個上げて下さい`;
   const reply = await chat(query);
   const lines = reply.message.content!;
   return lines.split("\n");
 };
 
-export const fetchWords = () => {
-  // const [words] = createResource(_fetchWords); // on clinet side (cannot get process.env)
-  // createServerData$ is routeData + useRouteData + createResource + server$
-  const words = createServerData$(_fetchWords); // on server side
-  return words;
-};
+// 以下は今後のための参考
+// export const fetchWords = () => {
+//   // const [words] = createResource(_fetchWords); // on clinet side (cannot get process.env)
+//   const words = createServerData$(_fetchWords); // on server side (createServerData$ is routeData + useRouteData + createResource + server$)
+//   return words;
+// };
 
-export const fetchWordsOnSignal = (signal: Accessor<boolean>) => () => {
-  const [words] = createResource(signal, server$(_fetchWords)); // on server side
-  return words;
-};
+// export const fetchWordsOnSignal = (fetchSignal: Accessor<boolean>) => () => {
+//   const [words] = createResource(fetchSignal, server$(_fetchWords)); // on server side
+//   return words;
+// };

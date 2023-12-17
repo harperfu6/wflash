@@ -3,12 +3,14 @@ import "./Flash.css";
 
 type IFlash = {
   words: string[];
-  inertvalTime: number;
+  intervalTime: number;
+  setIntervalTime: (time: number) => void;
 };
 
 const Flash = (props: IFlash) => {
   const words = () => props.words;
-  const intervalTime = () => props.inertvalTime;
+  const intervalTime = () => props.intervalTime;
+  const setIntervalTime = props.setIntervalTime;
 
   const [wordIdx, setWordIdx] = createSignal(0);
   const [isStarted, setIsStarted] = createSignal(false);
@@ -21,6 +23,11 @@ const Flash = (props: IFlash) => {
 
   const onClickShowWords = () => {
     setIsShowWords(!isShowWords());
+  };
+
+  const onDurationChange = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    setIntervalTime(Number(target.value));
   };
 
   createEffect(() => {
@@ -49,6 +56,15 @@ const Flash = (props: IFlash) => {
       <button class="flash" onClick={onClickShowWords}>
         {isShowWords() ? "hide words" : "show words"}
       </button>
+      <div>各文の表示時間</div>
+      <div>
+        <input
+          class="settings"
+          type="number"
+          value={intervalTime()}
+          onInput={onDurationChange}
+        />
+      </div>
       {isStarted() && <div class="word">{words()[wordIdx()]}</div>}
       {isShowWords() && <For each={words()}>{(word) => <div>{word}</div>}</For>}
     </>
