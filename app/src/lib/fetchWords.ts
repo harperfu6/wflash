@@ -1,5 +1,5 @@
-import { createResource } from "solid-js";
-import { createServerData$ } from "solid-start/server";
+import { Accessor, createResource } from "solid-js";
+import server$, { createServerData$ } from "solid-start/server";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -18,6 +18,7 @@ const _fetchWords = async () => {
   // return ["aaa", "bbb", "ccc"];
 
   const query = "10文字以上20文字以内の短文を5個上げて下さい";
+  // const query = "単語を5個上げて下さい";
   const reply = await chat(query);
   const lines = reply.message.content!;
   return lines.split("\n");
@@ -25,6 +26,12 @@ const _fetchWords = async () => {
 
 export const fetchWords = () => {
   // const [words] = createResource(_fetchWords); // on clinet side (cannot get process.env)
+  // createServerData$ is routeData + useRouteData + createResource + server$
   const words = createServerData$(_fetchWords); // on server side
+  return words;
+};
+
+export const fetchWordsOnSignal = (signal: Accessor<boolean>) => () => {
+  const [words] = createResource(signal, server$(_fetchWords)); // on server side
   return words;
 };
