@@ -1,20 +1,22 @@
-import { createEffect, createSignal, For, onCleanup } from "solid-js";
-import "./Flash.css";
+import { createAsync } from "@solidjs/router";
+import {
+  Component,
+  For,
+  Show,
+  Suspense,
+  createEffect,
+  createSignal,
+  onCleanup,
+} from "solid-js";
+import { getWords } from "~/lib/api";
+import { ChatSettings } from "~/types";
+import "./flash.css";
 
-type IFlash = {
-  words: string[];
-  intervalTime: number;
-  setIntervalTime: (time: number) => void;
-};
-
-const Flash = (props: IFlash) => {
-  const words = () => props.words;
-  const intervalTime = () => props.intervalTime;
-  const setIntervalTime = props.setIntervalTime;
-
+const Flash: Component<{ words: string[] }> = (props) => {
   const [wordIdx, setWordIdx] = createSignal(0);
   const [isStarted, setIsStarted] = createSignal(false);
   const [isShowWords, setIsShowWords] = createSignal(false);
+  const [intervalTime, setIntervalTime] = createSignal(1.5);
 
   const onClickStart = () => {
     setIsStarted(true);
@@ -31,7 +33,7 @@ const Flash = (props: IFlash) => {
   };
 
   createEffect(() => {
-    if (words && wordIdx() === words().length) {
+    if (props.words && wordIdx() === props.words.length) {
       setIsStarted(false);
       setWordIdx(0);
       clearInterval(intervalId);
@@ -65,10 +67,23 @@ const Flash = (props: IFlash) => {
           onInput={onDurationChange}
         />
       </div>
-      {isStarted() && <div class="word">{words()[wordIdx()]}</div>}
-      {isShowWords() && <For each={words()}>{(word) => <div>{word}</div>}</For>}
+      {isStarted() && <div class="word">{props.words[wordIdx()]}</div>}
+      {isShowWords() && (
+        <For each={props.words}>{(word) => <div>{word}</div>}</For>
+      )}
     </>
   );
 };
 
-export default Flash;
+const FlashEntry: Component<{ chatSettings: ChatSettings }> = (props) => {
+  const words = createAsync(() => getWords(props.chatSettings));
+  return (
+    <Suspense fallback={<div>文を生成中...</div>}>
+      <Show when={words()}>
+        <Flash words={words()!} />{" "}
+      </Show>
+    </Suspense>
+  );
+};
+
+export default FlashEntry;

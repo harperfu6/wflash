@@ -1,56 +1,38 @@
-import { createSignal, Show, Suspense } from "solid-js";
-import { createServerData$ } from "solid-start/server";
-import Flash from "~/components/Flash";
-import Settings from "~/components/Settings";
-import { fetchWords } from "~/lib/fetchWords";
-import { ChatSettings } from "~/types";
+import { Show, createSignal } from "solid-js";
+import Settings from "~/components/settings";
+import FlashEntry from "~/components/flash";
 
 export default function Home() {
+  const [isFetched, setIsFetched] = createSignal(false);
+
   // Chat Settings
-  const [wordLength, setWordLength] = createSignal(10);
-  const [wordNum, setWordNum] = createSignal(5);
-
-  // Flash Settings
-  const [intervalTime, setIntervalTime] = createSignal(1);
-
-  // Fetch
-  const [chatSettings, setChatSettings] = createSignal<
-    ChatSettings | undefined
-  >(undefined);
-
-  const fetchedWords = createServerData$(fetchWords, {
-    key: () => chatSettings(),
+  const [chatSettings, setChatSettings] = createSignal({
+    wordLength: 30,
+    wordNum: 5,
   });
 
-  const onClickFetch = () => {
-    // ここでcreateServerData$にreactiveな値を設定する
-    setChatSettings({ wordLength: wordLength(), wordNum: wordNum() });
+  const handleClick = () => {
+    setIsFetched(true);
   };
 
   return (
     <main>
-      <Suspense fallback={<div>文を生成中...</div>}>
-        <Show
-          when={fetchedWords()}
-          fallback={
-            <>
-              <Settings
-                wordLength={wordLength()}
-                setWordLength={setWordLength}
-                wordNum={wordNum()}
-                setWordNum={setWordNum}
-              />
-              <button onClick={onClickFetch}>生成</button>
-            </>
-          }
-        >
-          <Flash
-            words={fetchedWords()!}
-            intervalTime={intervalTime()}
-            setIntervalTime={setIntervalTime}
-          />
-        </Show>
-      </Suspense>
+      <Show
+        when={isFetched()}
+        fallback={
+          <>
+            <Settings
+              settings={{
+                chatSettings: chatSettings(),
+                setChatSettings: setChatSettings,
+              }}
+            />
+            <button onClick={handleClick}>fetch</button>
+          </>
+        }
+      >
+        <FlashEntry chatSettings={chatSettings()} />
+      </Show>
     </main>
   );
 }
