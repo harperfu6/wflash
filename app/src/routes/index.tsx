@@ -3,15 +3,13 @@ import Settings from "~/components/settings";
 import FlashEntry from "~/components/flash";
 
 export default function Home() {
-  const [isFetched, setIsFetched] = createSignal(false);
-
-  // Chat Settings
   const [chatSettings, setChatSettings] = createSignal({
     wordLength: 30,
     wordNum: 5,
   });
 
-  const handleClick = () => {
+  const [isFetched, setIsFetched] = createSignal(false);
+  const onClickFetch = () => {
     setIsFetched(true);
   };
 
@@ -27,11 +25,11 @@ export default function Home() {
                 setChatSettings: setChatSettings,
               }}
             />
-            <button onClick={handleClick}>fetch</button>
+            <button onClick={onClickFetch}>文章を生成</button>
           </>
         }
       >
-        <FlashEntry chatSettings={chatSettings()} />
+        <FlashEntry chatSettings={chatSettings()} setIsFetched={setIsFetched} />
       </Show>
     </main>
   );

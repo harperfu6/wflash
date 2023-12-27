@@ -12,7 +12,10 @@ import { getWords } from "~/lib/api";
 import { ChatSettings } from "~/types";
 import "./flash.css";
 
-const Flash: Component<{ words: string[] }> = (props) => {
+const Flash: Component<{
+  words: string[];
+  setIsFetched: (isFetched: boolean) => void;
+}> = (props) => {
   const [wordIdx, setWordIdx] = createSignal(0);
   const [isStarted, setIsStarted] = createSignal(false);
   const [isShowWords, setIsShowWords] = createSignal(false);
@@ -58,6 +61,9 @@ const Flash: Component<{ words: string[] }> = (props) => {
       <button class="flash" onClick={onClickShowWords}>
         {isShowWords() ? "hide words" : "show words"}
       </button>
+      <button class="flash" onClick={() => props.setIsFetched(false)}>
+        文章を再生成
+      </button>
       <div>各文の表示時間</div>
       <div>
         <input
@@ -75,12 +81,15 @@ const Flash: Component<{ words: string[] }> = (props) => {
   );
 };
 
-const FlashEntry: Component<{ chatSettings: ChatSettings }> = (props) => {
+const FlashEntry: Component<{
+  chatSettings: ChatSettings;
+  setIsFetched: (isFetched: boolean) => void;
+}> = (props) => {
   const words = createAsync(() => getWords(props.chatSettings));
   return (
     <Suspense fallback={<div>文を生成中...</div>}>
       <Show when={words()}>
-        <Flash words={words()!} />{" "}
+        <Flash words={words()!} setIsFetched={props.setIsFetched} />
       </Show>
     </Suspense>
   );
