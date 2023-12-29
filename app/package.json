@@ -7,6 +7,7 @@
     "start": "node ./.output/server/index.mjs"
   },
   "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.481.0",
     "@solidjs/meta": "^0.29.2",
     "@solidjs/router": "^0.10.5",
     "@solidjs/start": "^0.4.2",
