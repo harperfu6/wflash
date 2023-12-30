@@ -2,10 +2,14 @@ import { Show, createSignal } from "solid-js";
 import Settings from "~/components/settings";
 import FlashEntry from "~/components/flash";
 
+// export const route = {
+//   load: () => getScore(),
+// };
+
 export default function Home() {
   const [chatSettings, setChatSettings] = createSignal({
-    wordLength: 30,
     wordNum: 5,
+    wordLength: 30,
   });
 
   const [isFetched, setIsFetched] = createSignal(false);

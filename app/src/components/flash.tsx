@@ -8,8 +8,10 @@ import {
   createSignal,
   onCleanup,
 } from "solid-js";
-import { getWords } from "~/lib/api";
+import { getWords } from "~/lib/openAI";
 import { ChatSettings } from "~/types";
+import Stats from "./stats";
+
 import "./flash.css";
 
 const Flash: Component<{
@@ -20,6 +22,7 @@ const Flash: Component<{
   const [isStarted, setIsStarted] = createSignal(false);
   const [isShowWords, setIsShowWords] = createSignal(false);
   const [intervalTime, setIntervalTime] = createSignal(1.5);
+  const [isShowStats, setIsShowStats] = createSignal(false);
 
   const onClickStart = () => {
     setIsStarted(true);
@@ -40,6 +43,7 @@ const Flash: Component<{
       setIsStarted(false);
       setWordIdx(0);
       clearInterval(intervalId);
+      setIsShowStats(true);
     }
   });
 
@@ -77,6 +81,7 @@ const Flash: Component<{
       {isShowWords() && (
         <For each={props.words}>{(word) => <div>{word}</div>}</For>
       )}
+      {isShowStats() && <Stats score={3} />}
     </>
   );
 };

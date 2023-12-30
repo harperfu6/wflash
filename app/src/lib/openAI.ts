@@ -22,7 +22,6 @@ const setSecret = async () => {
         VersionStage: "AWSCURRENT", // VersionStage defaults to AWSCURRENT if unspecified
       }),
     );
-    console.log(response);
   } catch (error) {
     // For a list of exceptions thrown, see
     // https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
@@ -32,8 +31,15 @@ const setSecret = async () => {
   return JSON.parse(response.SecretString!)[keyName];
 };
 
-async function chat(query: string) {
-  const secret = await setSecret();
+const chat = async (query: string) => {
+  let secret;
+  if (process.env["OPENAI_API_KEY"]) {
+    // for local development
+    secret = process.env["OPENAI_API_KEY"];
+  } else {
+    // for production
+    secret = await setSecret();
+  }
   const openai = new OpenAI({
     apiKey: secret,
   });
@@ -42,7 +48,7 @@ async function chat(query: string) {
     model: "gpt-3.5-turbo",
   });
   return completion.choices[0];
-}
+};
 
 const fetchWords = async (chatSettings: ChatSettings) => {
   const query = `${chatSettings.wordLength}文字程度の短文を${chatSettings.wordNum}個上げて下さい`;
