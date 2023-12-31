@@ -13,6 +13,7 @@ import { ChatSettings } from "~/types";
 import Stats from "./stats";
 
 import "./flash.css";
+import Answer from "./answer";
 
 const Flash: Component<{
   words: string[];
@@ -22,6 +23,9 @@ const Flash: Component<{
   const [isStarted, setIsStarted] = createSignal(false);
   const [isShowWords, setIsShowWords] = createSignal(false);
   const [intervalTime, setIntervalTime] = createSignal(1.5);
+
+  const [isShowAnswer, setIsShowAnswer] = createSignal(false);
+  const [correctNum, setCorrectNum] = createSignal(0);
   const [isShowStats, setIsShowStats] = createSignal(false);
 
   const onClickStart = () => {
@@ -43,7 +47,7 @@ const Flash: Component<{
       setIsStarted(false);
       setWordIdx(0);
       clearInterval(intervalId);
-      setIsShowStats(true);
+      setIsShowAnswer(true);
     }
   });
 
@@ -81,7 +85,14 @@ const Flash: Component<{
       {isShowWords() && (
         <For each={props.words}>{(word) => <div>{word}</div>}</For>
       )}
-      {isShowStats() && <Stats score={3} />}
+      {isShowAnswer() && (
+        <Answer
+          words={props.words}
+          setCorrectNum={setCorrectNum}
+          setIsShowStats={setIsShowStats}
+        />
+      )}
+      {isShowStats() && <Stats />}
     </>
   );
 };

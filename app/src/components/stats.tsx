@@ -1,12 +1,11 @@
-import { createAsync } from "@solidjs/router";
+import { cache, createAsync } from "@solidjs/router";
 import { Component, For, Suspense } from "solid-js";
-import { getScore, setScore } from "~/lib/score";
+import { getScore } from "~/lib/score";
 
-const Stats: Component<{ score: number | undefined }> = (props) => {
-  if (props.score) {
-    createAsync(() => setScore(props.score!));
-  }
-  const scoreDictList = createAsync(getScore);
+const getScoreCached = cache(getScore, "getScore");
+
+const Stats: Component = () => {
+  const scoreDictList = createAsync(getScoreCached);
   return (
     <>
       <Suspense fallback={<div>loading stats...</div>}>

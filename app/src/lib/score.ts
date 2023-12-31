@@ -4,24 +4,22 @@ import { deleteCookie, getCookie, setCookie } from "@solidjs/start/server";
 import { getRequestEvent } from "solid-js/web";
 import { ScoreDict } from "~/types"; // error if you define types in the file including `use server`
 
-const cookieName = "score";
+const cookieName = "wflash-score";
 
-const _getScore = async (): Promise<ScoreDict[]> => {
+export const getScore = async (): Promise<ScoreDict[]> => {
   const event = getRequestEvent();
   const cookie = getCookie(event!, cookieName);
-  console.log(cookie);
   if (cookie === undefined) {
     return [];
   } else {
     const score = JSON.parse(cookie);
-    console.log(score);
     return score;
   }
 };
 
-const _setScore = async (score: number) => {
+export const setScore = async (score: number) => {
   const event = getRequestEvent();
-  const currentScoreDictList: ScoreDict[] = await _getScore();
+  const currentScoreDictList: ScoreDict[] = await getScore();
 
   const isExist = currentScoreDictList.some(
     (scoreDict: ScoreDict) => scoreDict.correctNum === score,
@@ -48,7 +46,7 @@ const _setScore = async (score: number) => {
     httpOnly: true,
     secure: true,
     sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge: 60 * 60 * 24 * 7, // 1 week
   });
 };
 
@@ -56,8 +54,3 @@ export const deleteScore = () => {
   const event = getRequestEvent();
   deleteCookie(event!, cookieName);
 };
-
-export const getScore = cache(_getScore, "getScore");
-export const setScore = cache(async (score: number): Promise<void> => {
-  return _setScore(score);
-}, "setScore");
