@@ -1,5 +1,4 @@
 "use server"; // execute on server only
-import { cache } from "@solidjs/router";
 import { deleteCookie, getCookie, setCookie } from "@solidjs/start/server";
 import { getRequestEvent } from "solid-js/web";
 import { ScoreDict } from "~/types"; // error if you define types in the file including `use server`

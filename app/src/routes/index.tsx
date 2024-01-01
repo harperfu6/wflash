@@ -2,9 +2,13 @@ import { Show, createSignal } from "solid-js";
 import Settings from "~/components/settings";
 import FlashEntry from "~/components/flash";
 
-// export const route = {
-//   load: () => getScore(),
-// };
+const buttonStyle = `
+  px-3 py-2
+  text-xs font-medium text-center text-white bg-blue-700
+  rounded-lg
+  hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300
+  dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800
+  `;
 
 export default function Home() {
   const [chatSettings, setChatSettings] = createSignal({
@@ -18,18 +22,22 @@ export default function Home() {
   };
 
   return (
-    <main>
+    <main class="text-center mx-auto text-gray-700 p-4">
       <Show
         when={isFetched()}
         fallback={
           <>
-            <Settings
-              settings={{
-                chatSettings: chatSettings(),
-                setChatSettings: setChatSettings,
-              }}
-            />
-            <button onClick={onClickFetch}>文章を生成</button>
+            <div class="mb-4">
+              <Settings
+                settings={{
+                  chatSettings: chatSettings(),
+                  setChatSettings: setChatSettings,
+                }}
+              />
+            </div>
+            <button class={buttonStyle} onClick={onClickFetch}>
+              生成
+            </button>
           </>
         }
       >

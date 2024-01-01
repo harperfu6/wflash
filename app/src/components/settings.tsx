@@ -1,6 +1,5 @@
 import { ChatSettings } from "~/types";
 import { Component } from "solid-js";
-import "./settings.css";
 
 type ISettings = {
   chatSettings: ChatSettings;
@@ -25,17 +24,16 @@ const Settings: Component<{ settings: ISettings }> = (props) => {
 
   return (
     <>
-      <h2>Settings</h2>
       <div>
         <input
-          class="settings"
+          class="text-2xl font-bold text-[#335d92] ml-4 w-16 h-6"
           type="number"
           value={props.settings.chatSettings.wordLength}
           onInput={onWordLengthChange}
         />
-        文字程度の文を
+        文字程度の文章を
         <input
-          class="settings"
+          class="text-2xl font-bold text-[#335d92] ml-4 w-16 h-6"
           type="number"
           value={props.settings.chatSettings.wordNum}
           onInput={onWordNumChange}
