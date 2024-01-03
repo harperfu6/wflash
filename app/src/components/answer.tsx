@@ -5,7 +5,9 @@ import {
   answerList,
   setAnswerList,
   setIsFetched,
+  setIsShowAnswer,
   setIsShowStats,
+  setIsStartedOnece,
 } from "~/store";
 
 const buttonStyle = `
@@ -60,6 +62,13 @@ const Answer: Component<{
     setAnswerList(newAnswerList);
   };
 
+  const onClickRefetch = () => {
+    setIsFetched(false);
+    setIsShowAnswer(false);
+    setIsShowStats(false);
+    setIsStartedOnece(false);
+  };
+
   return (
     <>
       {props.words() && (
@@ -85,7 +94,7 @@ const Answer: Component<{
       <button class={buttonStyle} onClick={checkAnswer}>
         回答を送信
       </button>
-      <button class={refetchButtonStyle} onClick={() => setIsFetched(false)}>
+      <button class={refetchButtonStyle} onClick={onClickRefetch}>
         文章を再生成
       </button>
     </>

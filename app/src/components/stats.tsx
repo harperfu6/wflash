@@ -2,6 +2,7 @@ import { Component, Suspense } from "solid-js";
 import { getScore } from "~/lib/score";
 import { onMount } from "solid-js";
 import { ScoreDict } from "~/types";
+import { setIsShowStats } from "~/store";
 
 const optionsBarHorizontal = {
   options: {
@@ -86,6 +87,10 @@ const Stats: Component = () => {
     await myModal.show();
   });
 
+  const onClickClose = () => {
+    setIsShowStats(false);
+  };
+
   return (
     <>
       <div
@@ -113,6 +118,7 @@ const Stats: Component = () => {
                 class="box-content rounded-none border-none hover:no-underline hover:opacity-75 focus:opacity-100 focus:shadow-none focus:outline-none"
                 data-te-modal-dismiss
                 aria-label="Close"
+                onclick={onClickClose}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -142,6 +148,7 @@ const Stats: Component = () => {
                 data-te-modal-dismiss
                 data-te-ripple-init
                 data-te-ripple-color="light"
+                onclick={onClickClose}
               >
                 Close
               </button>

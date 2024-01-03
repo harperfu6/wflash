@@ -16,19 +16,22 @@ import {
   isShowAnswer,
   isShowStats,
   isStarted,
+  isStartedOnece,
   setIsShowAnswer,
   setIsShowStats,
   setIsStarted,
+  setIsStartedOnece,
 } from "~/store";
 
 const buttonStyle = `
-  m-2
   px-3 py-2
   text-lg font-medium text-center text-white bg-blue-700
   rounded-lg
   hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300
   dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800
   `;
+
+const countDownList = ["3", "2", "1", "GO!"];
 
 const Flash: Component<{
   words: Accessor<string[] | undefined>;
@@ -38,6 +41,7 @@ const Flash: Component<{
 
   const onClickStart = () => {
     setIsStarted(true);
+    setIsStartedOnece(true);
     setIsShowAnswer(false);
     setIsShowStats(false);
     timer();
@@ -49,7 +53,10 @@ const Flash: Component<{
   };
 
   createEffect(() => {
-    if (props.words() && wordIdx() === props.words()!.length) {
+    if (
+      props.words() &&
+      wordIdx() === props.words()!.length + countDownList.length
+    ) {
       setIsStarted(false);
       setWordIdx(0);
       clearInterval(intervalId);
@@ -70,7 +77,7 @@ const Flash: Component<{
   return (
     <>
       {!isStarted() && (
-        <div class="flex justify-center">
+        <div class="flex flex-row justify-center content-center items-center">
           <div>
             <div>各文の表示時間</div>
             <div class="flex justify-center">
@@ -85,16 +92,16 @@ const Flash: Component<{
               <div>秒</div>
             </div>
           </div>
-          <div class="ml-4">
+          <div class="ml-8 mt-1">
             <button class={buttonStyle} onClick={onClickStart}>
-              start
+              {isStartedOnece() ? "再開" : "開始"}
             </button>
           </div>
         </div>
       )}
       {isStarted() && (
         <div class="text-[1.5em] text-[#335d92] font-bold mt-[1em];">
-          {props.words()![wordIdx()]}
+          {countDownList.concat(props.words()!)[wordIdx()]}
         </div>
       )}
       {!isStarted() && isShowAnswer() && <Answer words={props.words} />}

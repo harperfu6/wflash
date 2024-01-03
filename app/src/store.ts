@@ -2,8 +2,7 @@ import { createSignal } from "solid-js";
 
 export const [isFetched, setIsFetched] = createSignal<boolean>(false);
 export const [isStarted, setIsStarted] = createSignal<boolean>(false);
+export const [isStartedOnece, setIsStartedOnece] = createSignal<boolean>(false);
 export const [isShowAnswer, setIsShowAnswer] = createSignal<boolean>(false);
 export const [isShowStats, setIsShowStats] = createSignal<boolean>(false);
-export const [answerList, setAnswerList] = createSignal<string[] | undefined>(
-  undefined,
-);
+export const [answerList, setAnswerList] = createSignal<string[]>([]);
