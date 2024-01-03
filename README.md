@@ -1,5 +1,5 @@
 # TODO
 
-- add session, limit the number of games
-- add some settings
-  - game level
+- 一度送信後はその日は履歴を見るボタンに変更する
+- 文章一致度アルゴリズムの改善
+- ゲームレベルの追加

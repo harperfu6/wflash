@@ -1,5 +1,6 @@
 import { createAsync } from "@solidjs/router";
 import {
+  Accessor,
   Component,
   Show,
   Suspense,
@@ -11,6 +12,14 @@ import { getWords } from "~/lib/openAI";
 import { ChatSettings } from "~/types";
 import Stats from "./stats";
 import Answer from "./answer";
+import {
+  isShowAnswer,
+  isShowStats,
+  isStarted,
+  setIsShowAnswer,
+  setIsShowStats,
+  setIsStarted,
+} from "~/store";
 
 const buttonStyle = `
   m-2
@@ -22,15 +31,10 @@ const buttonStyle = `
   `;
 
 const Flash: Component<{
-  words: string[];
-  setIsFetched: (isFetched: boolean) => void;
+  words: Accessor<string[] | undefined>;
 }> = (props) => {
   const [wordIdx, setWordIdx] = createSignal(0);
-  const [isStarted, setIsStarted] = createSignal(false);
   const [intervalTime, setIntervalTime] = createSignal(1.5);
-
-  const [isShowAnswer, setIsShowAnswer] = createSignal(false);
-  const [isShowStats, setIsShowStats] = createSignal(false);
 
   const onClickStart = () => {
     setIsStarted(true);
@@ -45,7 +49,7 @@ const Flash: Component<{
   };
 
   createEffect(() => {
-    if (props.words && wordIdx() === props.words.length) {
+    if (props.words() && wordIdx() === props.words()!.length) {
       setIsStarted(false);
       setWordIdx(0);
       clearInterval(intervalId);
@@ -90,16 +94,10 @@ const Flash: Component<{
       )}
       {isStarted() && (
         <div class="text-[1.5em] text-[#335d92] font-bold mt-[1em];">
-          {props.words[wordIdx()]}
+          {props.words()![wordIdx()]}
         </div>
       )}
-      {isShowAnswer() && !isStarted() && (
-        <Answer
-          words={props.words}
-          setIsShowStats={setIsShowStats}
-          setIsFetched={props.setIsFetched}
-        />
-      )}
+      {!isStarted() && isShowAnswer() && <Answer words={props.words} />}
       {isShowStats() && <Stats />}
     </>
   );
@@ -107,13 +105,12 @@ const Flash: Component<{
 
 const FlashEntry: Component<{
   chatSettings: ChatSettings;
-  setIsFetched: (isFetched: boolean) => void;
 }> = (props) => {
   const words = createAsync(() => getWords(props.chatSettings));
   return (
     <Suspense fallback={<div>文章を生成中...</div>}>
       <Show when={words()}>
-        <Flash words={words()!} setIsFetched={props.setIsFetched} />
+        <Flash words={words!} />
       </Show>
     </Suspense>
   );

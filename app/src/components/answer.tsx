@@ -1,6 +1,12 @@
-import { Component, For } from "solid-js";
+import { Accessor, Component, For, createSignal } from "solid-js";
 import { getCorrectAnswerNum } from "~/lib/checkAnswer";
-import { getScore, setScore } from "~/lib/score";
+import { setScore } from "~/lib/score";
+import {
+  answerList,
+  setAnswerList,
+  setIsFetched,
+  setIsShowStats,
+} from "~/store";
 
 const buttonStyle = `
   m-2
@@ -21,36 +27,54 @@ const refetchButtonStyle = `
   `;
 
 const Answer: Component<{
-  words: string[];
-  setIsShowStats: (isShowStats: boolean) => void;
-  setIsFetched: (isFetched: boolean) => void;
+  words: Accessor<string[] | undefined>;
 }> = (props) => {
+  console.log(props.words());
+
+  const placeholderList = Array.from(Array(props.words()!.length).keys()).map(
+    (idx) => `${idx + 1}番目の文章を入力`,
+  );
+
+  if (answerList()!.length !== props.words()!.length) {
+    setAnswerList(Array(props.words()!.length).fill(""));
+  }
+
   const checkAnswer = async () => {
     const answers = document.querySelectorAll<HTMLInputElement>(".answer");
     const answerList = Array.from(answers).map((answer) => answer.value);
 
     const correctAnswerNum = getCorrectAnswerNum(
       answerList,
-      props.words.map((word) => word.split(". ")[1]), // ex: remove '1. ' from '1. answer'
+      props.words()!.map((word) => word.split(". ")[1]), // ex: remove '1. ' from '1. answer'
     );
 
     await setScore(correctAnswerNum);
-    props.setIsShowStats(true);
+    setIsShowStats(true);
+  };
+
+  const onInput = (idx: number) => (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    const value = target.value;
+    const newAnswerList = answerList()!;
+    newAnswerList[idx] = value;
+    setAnswerList(newAnswerList);
   };
 
   return (
     <>
-      {props.words && (
-        <For each={props.words}>
+      {props.words() && (
+        <For each={props.words()}>
           {(_, i) => {
-            const idx = i() + 1;
+            const answer = answerList()![i()];
             return (
               <ul class="list-none">
                 <li>
                   <input
-                    class="ring-1 answer"
+                    class="answer ring-1 m-2 p-2 w-96"
                     type="text"
-                    placeholder={`${idx.toString()}番目の回答を入力してください`}
+                    value={answer}
+                    placeholder={placeholderList[i()]}
+                    onInput={onInput(i())}
                   />
                 </li>
               </ul>
@@ -61,10 +85,7 @@ const Answer: Component<{
       <button class={buttonStyle} onClick={checkAnswer}>
         回答を送信
       </button>
-      <button
-        class={refetchButtonStyle}
-        onClick={() => props.setIsFetched(false)}
-      >
+      <button class={refetchButtonStyle} onClick={() => setIsFetched(false)}>
         文章を再生成
       </button>
     </>

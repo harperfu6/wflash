@@ -38,6 +38,9 @@ const chat = async (query: string) => {
     secret = process.env["OPENAI_API_KEY"];
   } else {
     // for production
+    console.log(
+      "can't find OPENAI_API_KEY in env. fetch from AWS Secrets Manager",
+    );
     secret = await setSecret();
   }
   const openai = new OpenAI({

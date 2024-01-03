@@ -1,6 +1,7 @@
 import { Show, createSignal } from "solid-js";
 import Settings from "~/components/settings";
 import FlashEntry from "~/components/flash";
+import { isFetched, setIsFetched } from "~/store";
 
 const buttonStyle = `
   px-3 py-2
@@ -16,7 +17,6 @@ export default function Home() {
     wordLength: 30,
   });
 
-  const [isFetched, setIsFetched] = createSignal(false);
   const onClickFetch = () => {
     setIsFetched(true);
   };
@@ -41,7 +41,7 @@ export default function Home() {
           </>
         }
       >
-        <FlashEntry chatSettings={chatSettings()} setIsFetched={setIsFetched} />
+        <FlashEntry chatSettings={chatSettings()} />
       </Show>
     </main>
   );
