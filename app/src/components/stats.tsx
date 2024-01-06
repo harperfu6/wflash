@@ -28,6 +28,9 @@ const optionsBarHorizontal = {
         },
         ticks: {
           color: "rgba(0,0,0, 0.5)",
+          font: {
+            size: 10,
+          },
         },
       },
     },

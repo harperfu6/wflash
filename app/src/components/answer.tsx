@@ -7,7 +7,7 @@ import {
   setIsFetched,
   setIsShowAnswer,
   setIsShowStats,
-  setIsStartedOnece,
+  setStartCount,
 } from "~/store";
 
 const buttonStyle = `
@@ -66,7 +66,7 @@ const Answer: Component<{
     setIsFetched(false);
     setIsShowAnswer(false);
     setIsShowStats(false);
-    setIsStartedOnece(false);
+    setStartCount(0);
   };
 
   return (

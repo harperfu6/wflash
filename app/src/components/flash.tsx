@@ -16,12 +16,13 @@ import {
   isShowAnswer,
   isShowStats,
   isStarted,
-  isStartedOnece,
   setIsShowAnswer,
   setIsShowStats,
   setIsStarted,
-  setIsStartedOnece,
+  setStartCount,
+  startCount,
 } from "~/store";
+import { maxStartCount } from "~/const";
 
 const buttonStyle = `
   px-3 py-2
@@ -41,7 +42,7 @@ const Flash: Component<{
 
   const onClickStart = () => {
     setIsStarted(true);
-    setIsStartedOnece(true);
+    setStartCount(startCount() + 1);
     setIsShowAnswer(false);
     setIsShowStats(false);
     timer();
@@ -77,27 +78,35 @@ const Flash: Component<{
   return (
     <>
       {!isStarted() && (
-        <div class="flex flex-row justify-center content-center items-center">
-          <div>
-            <div>各文の表示時間</div>
-            <div class="flex justify-center">
-              <div>
-                <input
-                  class="text-2xl font-bold text-[#335d92] ml-4 w-16 h-6"
-                  type="number"
-                  value={intervalTime()}
-                  onInput={onDurationChange}
-                />
+        <Show
+          when={startCount() < maxStartCount}
+          fallback={<div>上限回数表示されました。回答を送信してください。</div>}
+        >
+          <div class="flex flex-row justify-center content-center items-center">
+            <div>
+              <div>各文の表示時間</div>
+              <div class="flex justify-center">
+                <div>
+                  <input
+                    class="text-2xl font-bold text-[#335d92] ml-4 w-16 h-6"
+                    type="number"
+                    value={intervalTime()}
+                    onInput={onDurationChange}
+                  />
+                </div>
+                <div>秒</div>
               </div>
-              <div>秒</div>
+            </div>
+            <div class="ml-8 mt-1">
+              <button class={buttonStyle} onClick={onClickStart}>
+                {startCount() >= 1 ? "再開" : "開始"}
+              </button>
+            </div>
+            <div class="ml-8 mt-1">
+              あと{maxStartCount - startCount()}回まで
             </div>
           </div>
-          <div class="ml-8 mt-1">
-            <button class={buttonStyle} onClick={onClickStart}>
-              {isStartedOnece() ? "再開" : "開始"}
-            </button>
-          </div>
-        </div>
+        </Show>
       )}
       {isStarted() && (
         <div class="text-[1.5em] text-[#335d92] font-bold mt-[1em];">

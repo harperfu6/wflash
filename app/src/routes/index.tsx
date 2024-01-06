@@ -2,6 +2,7 @@ import { Show, createSignal } from "solid-js";
 import Settings from "~/components/settings";
 import FlashEntry from "~/components/flash";
 import { isFetched, setIsFetched } from "~/store";
+import { defaultWordLength, defaultWordNum } from "~/const";
 
 const buttonStyle = `
   px-3 py-2
@@ -13,8 +14,8 @@ const buttonStyle = `
 
 export default function Home() {
   const [chatSettings, setChatSettings] = createSignal({
-    wordNum: 5,
-    wordLength: 30,
+    wordNum: defaultWordNum,
+    wordLength: defaultWordLength,
   });
 
   const onClickFetch = () => {
