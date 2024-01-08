@@ -102,7 +102,7 @@ const Flash: Component<{
                 {startCount() >= 1 ? "再開" : "開始"}
               </button>
             </div>
-            <div class="ml-8 mt-1">
+            <div class="ml-8 items-center">
               あと{maxStartCount - startCount()}回まで
             </div>
           </div>

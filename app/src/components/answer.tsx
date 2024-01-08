@@ -1,8 +1,10 @@
-import { Accessor, Component, For } from "solid-js";
+import { Accessor, Component, For, Show } from "solid-js";
+import { maxFetchCount } from "~/const";
 import { getCorrectAnswerNum } from "~/lib/checkAnswer";
 import { getGame, setGame, setScore } from "~/lib/cookie";
 import {
   answerList,
+  fetchCount,
   isGame,
   setAnswerList,
   setIsFetched,
@@ -102,9 +104,21 @@ const Answer: Component<{
       <button class={buttonStyle} onClick={checkAnswer}>
         {isGame() ? "結果を見る" : "回答する"}
       </button>
-      <button class={refetchButtonStyle} onClick={onClickRefetch}>
-        文章を再生成
-      </button>
+      <Show
+        when={fetchCount() < maxFetchCount}
+        fallback={
+          <div>
+            文章の再生成回数の上限を超えました。現在の文章で回答を送信してください。
+          </div>
+        }
+      >
+        <div class="flex justify-center items-center">
+          <button class={refetchButtonStyle} onClick={onClickRefetch}>
+            文章を再生成
+          </button>
+          <div class="ml-8">あと{maxFetchCount - fetchCount()}回まで</div>
+        </div>
+      </Show>
     </>
   );
 };

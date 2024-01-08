@@ -1,8 +1,15 @@
 import { Show, Suspense, createSignal } from "solid-js";
 import Settings from "~/components/settings";
 import FlashEntry from "~/components/flash";
-import { isFetched, isShowStats, setIsFetched, setIsShowStats } from "~/store";
-import { defaultWordLength, defaultWordNum } from "~/const";
+import {
+  fetchCount,
+  isFetched,
+  isShowStats,
+  setFetchCount,
+  setIsFetched,
+  setIsShowStats,
+} from "~/store";
+import { defaultWordLength, defaultWordNum, maxFetchCount } from "~/const";
 import { createAsync } from "@solidjs/router";
 import { getGame } from "~/lib/cookie";
 import Stats from "~/components/stats";
@@ -16,15 +23,16 @@ const buttonStyle = `
   `;
 
 export default function Home() {
-  const isGame = createAsync(getGame);
+  const cookeiIsGame = createAsync(getGame);
 
   const [chatSettings, setChatSettings] = createSignal({
     wordNum: defaultWordNum,
     wordLength: defaultWordLength,
   });
 
-  const onClickFetch = () => {
+  const onClickFetch = async () => {
     setIsFetched(true);
+    setFetchCount(fetchCount() + 1);
   };
 
   const onClickShowStats = () => {
@@ -34,8 +42,8 @@ export default function Home() {
   return (
     <main class="flex flex-col items-center justify-center min-h-screen text-center mx-auto text-gray-700 p-4">
       <Suspense fallback={<div>本日のゲーム情報を取得中...</div>}>
-        <Show when={isGame()}>
-          {isGame()!.isGame && (
+        <Show when={cookeiIsGame()}>
+          {cookeiIsGame()!.isGame && (
             <>
               <div class="flex justify-center">
                 <button class={buttonStyle} onClick={onClickShowStats}>
@@ -45,30 +53,39 @@ export default function Home() {
               {isShowStats() && <Stats />}
             </>
           )}
-          {!isGame()!.isGame && (
+          {!cookeiIsGame()!.isGame && (
             <Show
-              when={isFetched()}
+              when={fetchCount() <= maxFetchCount}
               fallback={
-                <>
-                  <div class="flex flex-col justify-center">
-                    <div class="mb-4">
-                      <Settings
-                        settings={{
-                          chatSettings: chatSettings(),
-                          setChatSettings: setChatSettings,
-                        }}
-                      />
-                    </div>
-                    <div class="ml-4">
-                      <button class={buttonStyle} onClick={onClickFetch}>
-                        生成
-                      </button>
-                    </div>
-                  </div>
-                </>
+                <div>
+                  本日の文章の生成回数の上限を超えました。明日また再チャレンジしてください。
+                </div>
               }
             >
-              <FlashEntry chatSettings={chatSettings()} />
+              <Show
+                when={isFetched()}
+                fallback={
+                  <>
+                    <div class="flex flex-col justify-center">
+                      <div class="mb-4">
+                        <Settings
+                          settings={{
+                            chatSettings: chatSettings(),
+                            setChatSettings: setChatSettings,
+                          }}
+                        />
+                      </div>
+                      <div class="ml-4">
+                        <button class={buttonStyle} onClick={onClickFetch}>
+                          生成
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                }
+              >
+                <FlashEntry chatSettings={chatSettings()} />
+              </Show>
             </Show>
           )}
         </Show>

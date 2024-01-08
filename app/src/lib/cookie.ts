@@ -1,10 +1,11 @@
 "use server"; // execute on server only
 import { deleteCookie, getCookie, setCookie } from "@solidjs/start/server";
 import { getRequestEvent } from "solid-js/web";
-import { GameDict, ScoreDict } from "~/types"; // error if you define types in the file including `use server`
+import { FetchCountDict, GameDict, ScoreDict } from "~/types"; // error if you define types in the file including `use server`
 
 const scoreCookieName = "wflash-score";
 const gameCookieName = "wflash-game";
+const fetchCookieName = "wflash-fetch";
 
 export const getScore = async (): Promise<ScoreDict[]> => {
   const event = getRequestEvent();
