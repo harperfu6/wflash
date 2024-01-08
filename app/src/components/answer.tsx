@@ -1,6 +1,6 @@
 import { Accessor, Component, For, Show } from "solid-js";
 import { maxFetchCount } from "~/const";
-import { getCorrectAnswerNum } from "~/lib/checkAnswer";
+import { getCorrectList } from "~/lib/checkAnswer";
 import { setGame, setScore } from "~/lib/cookie";
 import {
   answerList,
@@ -13,6 +13,7 @@ import {
   setIsShowStats,
   setStartCount,
 } from "~/store";
+import { trimWords } from "~/utils";
 
 const buttonStyle = `
   m-2
@@ -50,13 +51,18 @@ const Answer: Component<{
       const answers = document.querySelectorAll<HTMLInputElement>(".answer");
       const answerList = Array.from(answers).map((answer) => answer.value);
 
-      const correctAnswerNum = getCorrectAnswerNum(
-        answerList,
-        props.words()!.map((word) => word.split(". ")[1]), // ex: remove '1. ' from '1. answer'
-      );
+      const correctList = getCorrectList(answerList, trimWords(props.words()!));
+      const correctAnswerNum = correctList.filter(
+        (isCorrect: boolean) => isCorrect,
+      ).length;
 
       await setScore(correctAnswerNum);
-      await setGame(correctAnswerNum);
+      await setGame(
+        correctAnswerNum,
+        trimWords(props.words()!),
+        answerList,
+        correctList,
+      );
 
       setIsGame(true);
       setIsShowStats(true);
@@ -113,12 +119,14 @@ const Answer: Component<{
           </div>
         }
       >
-        <div class="flex justify-center items-center">
-          <button class={refetchButtonStyle} onClick={onClickRefetch}>
-            文章を再生成
-          </button>
-          <div class="ml-8">あと{maxFetchCount - fetchCount()}回まで</div>
-        </div>
+        {!isGame() && (
+          <div class="flex justify-center items-center">
+            <button class={refetchButtonStyle} onClick={onClickRefetch}>
+              文章を再生成
+            </button>
+            <div class="ml-8">あと{maxFetchCount - fetchCount()}回まで</div>
+          </div>
+        )}
       </Show>
     </>
   );

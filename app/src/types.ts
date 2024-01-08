@@ -11,4 +11,7 @@ export type ScoreDict = {
 export type GameDict = {
   isGame: boolean;
   todayScore: number;
+  todayWords: string[];
+  todayAnswers: string[];
+  todayCorrects: string[];
 };

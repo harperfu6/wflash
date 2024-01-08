@@ -88,19 +88,36 @@ export const getGame = async (): Promise<GameDict> => {
   const event = getRequestEvent();
   const cookie = getCookie(event!, gameCookieName);
   if (cookie === undefined) {
-    return { isGame: false, todayScore: 0 };
+    return {
+      isGame: false,
+      todayScore: 0,
+      todayWords: [],
+      todayAnswers: [],
+      todayCorrects: [],
+    };
   } else {
     const isGame = JSON.parse(cookie);
     return isGame;
   }
 };
 
-export const setGame = async (todayScore: number) => {
+export const setGame = async (
+  todayScore: number,
+  todayWords: string[],
+  todayAnswers: string[],
+  todayCorrects: boolean[],
+) => {
   const event = getRequestEvent();
   setCookie(
     event!,
     gameCookieName,
-    JSON.stringify({ isGame: true, todayScore }),
+    JSON.stringify({
+      isGame: true,
+      todayScore,
+      todayWords,
+      todayAnswers,
+      todayCorrects,
+    }),
     {
       httpOnly: true,
       secure: true,
