@@ -1,5 +1,6 @@
 import { createSignal } from "solid-js";
 
+export const [isGame, setIsGame] = createSignal<boolean>(false);
 export const [isFetched, setIsFetched] = createSignal<boolean>(false);
 export const [isStarted, setIsStarted] = createSignal<boolean>(false);
 export const [startCount, setStartCount] = createSignal<number>(0);

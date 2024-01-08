@@ -6,3 +6,7 @@ export type ScoreDict = {
   correctNum: number;
   historyNum: number;
 };
+
+export type GameDict = {
+  isGame: boolean;
+};

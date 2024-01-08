@@ -1,10 +1,12 @@
-import { Accessor, Component, For, createSignal } from "solid-js";
+import { Accessor, Component, For } from "solid-js";
 import { getCorrectAnswerNum } from "~/lib/checkAnswer";
-import { setScore } from "~/lib/score";
+import { getGame, setGame, setScore } from "~/lib/cookie";
 import {
   answerList,
+  isGame,
   setAnswerList,
   setIsFetched,
+  setIsGame,
   setIsShowAnswer,
   setIsShowStats,
   setStartCount,
@@ -42,16 +44,22 @@ const Answer: Component<{
   }
 
   const checkAnswer = async () => {
-    const answers = document.querySelectorAll<HTMLInputElement>(".answer");
-    const answerList = Array.from(answers).map((answer) => answer.value);
+    if (!isGame()) {
+      const answers = document.querySelectorAll<HTMLInputElement>(".answer");
+      const answerList = Array.from(answers).map((answer) => answer.value);
 
-    const correctAnswerNum = getCorrectAnswerNum(
-      answerList,
-      props.words()!.map((word) => word.split(". ")[1]), // ex: remove '1. ' from '1. answer'
-    );
+      const correctAnswerNum = getCorrectAnswerNum(
+        answerList,
+        props.words()!.map((word) => word.split(". ")[1]), // ex: remove '1. ' from '1. answer'
+      );
 
-    await setScore(correctAnswerNum);
-    setIsShowStats(true);
+      await setScore(correctAnswerNum);
+      await setGame();
+      setIsGame(true);
+      setIsShowStats(true);
+    } else {
+      setIsShowStats(true);
+    }
   };
 
   const onInput = (idx: number) => (e: Event) => {
@@ -92,7 +100,7 @@ const Answer: Component<{
         </For>
       )}
       <button class={buttonStyle} onClick={checkAnswer}>
-        回答を送信
+        {isGame() ? "結果を見る" : "回答する"}
       </button>
       <button class={refetchButtonStyle} onClick={onClickRefetch}>
         文章を再生成

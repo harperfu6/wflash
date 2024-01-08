@@ -1,5 +1,5 @@
 import { Component, Suspense } from "solid-js";
-import { getScore } from "~/lib/score";
+import { getScore } from "~/lib/cookie";
 import { onMount } from "solid-js";
 import { ScoreDict } from "~/types";
 import { setIsShowStats } from "~/store";
