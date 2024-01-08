@@ -94,6 +94,7 @@ export const getGame = async (): Promise<GameDict> => {
       todayWords: [],
       todayAnswers: [],
       todayCorrects: [],
+      todaySims: [],
     };
   } else {
     const isGame = JSON.parse(cookie);
@@ -106,6 +107,7 @@ export const setGame = async (
   todayWords: string[],
   todayAnswers: string[],
   todayCorrects: boolean[],
+  todaySims: number[],
 ) => {
   const event = getRequestEvent();
   setCookie(
@@ -117,6 +119,7 @@ export const setGame = async (
       todayWords,
       todayAnswers,
       todayCorrects,
+      todaySims,
     }),
     {
       httpOnly: true,

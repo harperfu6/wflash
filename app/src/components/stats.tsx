@@ -134,6 +134,9 @@ const Stats: Component = () => {
                         回答
                       </th>
                       <th scope="col" class="px-6 py-4">
+                        類似度
+                      </th>
+                      <th scope="col" class="px-6 py-4">
                         正否
                       </th>
                     </tr>
@@ -145,6 +148,9 @@ const Stats: Component = () => {
                           <td class="px-6 py-4">{word}</td>
                           <td class="px-6 py-4">
                             {todayGame()?.todayAnswers[idx]}
+                          </td>
+                          <td class="px-6 py-4">
+                            {todayGame()?.todaySims[idx]}
                           </td>
                           <td class="px-6 py-4 text-center">
                             {todayGame()?.todayCorrects[idx] ? (

@@ -1,6 +1,6 @@
 import { Accessor, Component, For, Show } from "solid-js";
-import { maxFetchCount } from "~/const";
-import { getCorrectList } from "~/lib/checkAnswer";
+import { maxFetchCount, similarityThreshold } from "~/const";
+import { getSimilarityList } from "~/lib/checkAnswer";
 import { setGame, setScore } from "~/lib/cookie";
 import {
   answerList,
@@ -51,7 +51,15 @@ const Answer: Component<{
       const answers = document.querySelectorAll<HTMLInputElement>(".answer");
       const answerList = Array.from(answers).map((answer) => answer.value);
 
-      const correctList = getCorrectList(answerList, trimWords(props.words()!));
+      const similarityList = getSimilarityList(
+        answerList,
+        trimWords(props.words()!),
+      );
+
+      const correctList = similarityList.map(
+        (similarity: number) => similarity >= similarityThreshold,
+      );
+
       const correctAnswerNum = correctList.filter(
         (isCorrect: boolean) => isCorrect,
       ).length;
@@ -62,6 +70,7 @@ const Answer: Component<{
         trimWords(props.words()!),
         answerList,
         correctList,
+        similarityList,
       );
 
       setIsGame(true);

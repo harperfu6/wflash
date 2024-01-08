@@ -14,4 +14,10 @@ export type GameDict = {
   todayWords: string[];
   todayAnswers: string[];
   todayCorrects: string[];
+  todaySims: number[];
 };
+
+export enum SimilarityMethod {
+  SAME = "same",
+  LEVENSHTEIN = "levenshtein",
+}
