@@ -10,4 +10,5 @@ export type ScoreDict = {
 
 export type GameDict = {
   isGame: boolean;
+  todayScore: number;
 };

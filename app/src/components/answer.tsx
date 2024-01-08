@@ -1,7 +1,7 @@
 import { Accessor, Component, For, Show } from "solid-js";
 import { maxFetchCount } from "~/const";
 import { getCorrectAnswerNum } from "~/lib/checkAnswer";
-import { getGame, setGame, setScore } from "~/lib/cookie";
+import { setGame, setScore } from "~/lib/cookie";
 import {
   answerList,
   fetchCount,
@@ -56,7 +56,8 @@ const Answer: Component<{
       );
 
       await setScore(correctAnswerNum);
-      await setGame();
+      await setGame(correctAnswerNum);
+
       setIsGame(true);
       setIsShowStats(true);
     } else {
